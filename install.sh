@@ -3,10 +3,6 @@
 # Configuration Variables
 USB_FILE_SIZE_MB=2048 # Size of the USB file in Megabytes
 
-# Clone the repository
-# git clone https://github.com/mrfenyx/RPi-Zero-W-WiFi-USB.git
-# cd RPi-Zero-W-WiFi-USB
-
 # Install necessary packages
 sudo apt-get update && sudo apt-get upgrade -y
 sudo apt-get install -y samba winbind python3-pip python3-watchdog
