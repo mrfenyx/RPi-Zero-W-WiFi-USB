@@ -270,7 +270,7 @@ You should see some log outputs in the console. Now open the network share and a
 
 To stop the script execution, **press CTRL + C**.
 
-# Making the Script into a Service
+## Making the Script into a Service
 
 You want this script to run as a service, every time the Raspberry Pi reboots. To do this, create a new service file:
 ```bash
@@ -301,7 +301,7 @@ Finally, enable the service:
 ```bash
 sudo systemctl enable usbshare.service
 ```
-# Reboot and see if it works
+## Reboot and see if it works
 
 This is it! Now, reboot your Raspberry Pi:
 ```bash
