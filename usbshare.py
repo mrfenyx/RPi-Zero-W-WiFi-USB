@@ -7,7 +7,7 @@ from watchdog.observers import Observer
 from watchdog.events import *
 
 # Set up logging
-logging.basicConfig(level=logging.DEBUG)  # Set to logging.INFO to reduce verbosity
+logging.basicConfig(level=logging.INFO)  # Set to logging.INFO to reduce verbosity
 logger = logging.getLogger(__name__)
 
 CMD_MOUNT = "sudo /sbin/modprobe g_multi file=/piusb.bin stall=0 removable=1"
