@@ -12,7 +12,7 @@ echo "dtoverlay=dwc2" | sudo tee -a /boot/config.txt
 echo "dwc2" | sudo tee -a /etc/modules
 
 # Carefully edit commandline.txt to append 'modules-load=dwc2' at the end of the line
-sudo sed -i '$ s/$/ modules-load=dwc2/' /boot/commandline.txt
+sudo sed -i '$ s/$/modules-load=dwc2 /' /boot/cmdline.txt
 
 # Disabling power-saving for Wlan
 sudo iw wlan0 set power_save off
@@ -30,11 +30,12 @@ sudo mount -a
 # Configure Samba
 cat <<EOT | sudo tee -a /etc/samba/smb.conf
 [usb]
+    browseable = yes
     path = /mnt/usb_share
-    writeable=Yes
-    create mask=0777
-    directory mask=0777
-    public=no
+    guest ok = yes
+    read only = no
+    create mask = 777
+    directory mask = 777
 EOT
 
 # Restart Samba services
