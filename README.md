@@ -1,5 +1,4 @@
-# RPi-Zero-W-WiFi-USB
-Use the Raspberry Pi Zero W as a WiFi USB Stick
+# Introduction
 
 ## Goal
 
@@ -30,7 +29,29 @@ In general, you only have to select the file on your printer and that's it! No m
 sudo apt update && sudo apt upgrade -y
 ```
 
+# Automated Setup
+In order to perform the setup automatically, you will have to do a few manual steps to checkout this repository and run the installation script.
+```bash
+sudo apt update
+sudo apt install git -y
+git clone https://github.com/mrfenyx/RPi-Zero-W-WiFi-USB.git
+cd RPi-Zero-W-WiFi-USB
+sudo chmod +x install.sh
+sudo ./install.sh
+```
+While the script is doing it's thing, you will still have to [fix the USB data cable](#fixing-the-usb-data-cable).
+
+Once that is done, just hang back and watch the work happen. 
+
+**NOTE:** This will probably take a while. Depending on how many updates the system needs to install, anywhere from 30-60 minutes, maybe even more.
+
+# Manual Setup
+
+If you want to do the setup manually, perform the steps below. This will also allow you to perform some checks from time to time and explains what is happening in more detail.
+
 ## Enabling the USB Driver
+
+This will ensure that the Raspberry Pi can act as a USB device and is being recognized as such by your laptop or 3D Printer.
 
 You will have to edit some configuration files.
 ```bash
