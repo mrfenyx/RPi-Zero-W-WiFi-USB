@@ -6,6 +6,36 @@ REQUIRED_SPACE_MB=$((USB_FILE_SIZE_MB + 1024)) # Required space including buffer
 MOUNT_FOLDER="/mnt/usb_share"
 USE_EXISTING_FOLDER="no"
 
+# Known compatible hardware models
+COMPATIBLE_MODELS=("Raspberry Pi Zero W Rev 1.1")
+
+# Check the hardware model
+HARDWARE_MODEL=$(cat /proc/device-tree/model)
+
+# Function to check if the model is in the list of compatible models
+is_model_compatible() {
+    for model in "${COMPATIBLE_MODELS[@]}"; do
+        if [[ $model == $1 ]]; then
+            return 0
+        fi
+    done
+    return 1
+}
+
+# Perform the hardware check
+if is_model_compatible "$HARDWARE_MODEL"; then
+    echo "Detected compatible hardware: $HARDWARE_MODEL"
+else
+    echo "Detected hardware: $HARDWARE_MODEL"
+    echo "This hardware model is not in the list of known compatible models. The script might not work as expected."
+    echo "Do you want to continue anyway? (y/n)"
+    read continue_choice
+    if [[ "$continue_choice" != "y" && "$continue_choice" != "yes" ]]; then
+        echo "Aborting script due to potential compatibility issues."
+        exit 1
+    fi
+fi
+
 # Install necessary packages
 sudo apt-get update && sudo apt-get upgrade -y
 sudo apt-get install -y samba winbind python3-pip python3-watchdog
@@ -141,6 +171,14 @@ EOT
 sudo systemctl daemon-reload
 sudo systemctl enable usbshare.service
 sudo systemctl start usbshare.service
+
+# Feedback request for new hardware models
+if [ "$COMPATIBILITY_CHECK_PASSED" = false ]; then
+    echo "It looks like you ran this script on a different hardware model."
+    echo "If everything worked as expected, please consider creating a new issue in the repository:"
+    echo "https://github.com/mrfenyx/RPi-Zero-W-WiFi-USB"
+    echo "This will help us to update the list of known compatible models. Thank you!"
+fi
 
 # Optional reboot
 echo "Setup complete. It's recommended to reboot the system. Do you want to reboot now? (y/n)"
