@@ -45,7 +45,7 @@ echo "dtoverlay=dwc2" | sudo tee -a /boot/config.txt
 echo "dwc2" | sudo tee -a /etc/modules
 
 # Carefully edit commandline.txt to append 'modules-load=dwc2' at the end of the line
-sudo sed -i '$ s/$/modules-load=dwc2 /' /boot/cmdline.txt
+sudo sed -i '$ s/$/ modules-load=dwc2 /' /boot/cmdline.txt
 
 # Disabling power-saving for Wlan
 sudo iw wlan0 set power_save off
