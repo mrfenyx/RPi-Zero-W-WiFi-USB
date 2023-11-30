@@ -25,6 +25,7 @@ is_model_compatible() {
 # Perform the hardware check
 if is_model_compatible "$HARDWARE_MODEL"; then
     echo "Detected compatible hardware: $HARDWARE_MODEL"
+    COMPATIBILITY_CHECK_PASSED=true
 else
     echo "Detected hardware: $HARDWARE_MODEL"
     echo "This hardware model is not in the list of known compatible models. The script might not work as expected."
@@ -33,6 +34,8 @@ else
     if [[ "$continue_choice" != "y" && "$continue_choice" != "yes" ]]; then
         echo "Aborting script due to potential compatibility issues."
         exit 1
+    else
+        COMPATIBILITY_CHECK_PASSED=false
     fi
 fi
 
@@ -74,12 +77,42 @@ while true; do
     fi
 done
 
+# Function to append text to a file, check for existing text, and verify successful writing
+append_text_to_file() {
+    local text="$1"
+    local file="$2"
+    local identifier="$3"
+
+    # Check if the identifier is provided and exists in the file
+    if [[ -n "$identifier" && $(grep -Fxc "$identifier" "$file") -ne 0 ]]; then
+        echo "The identifier '$identifier' already exists in $file."
+        return 1
+    fi
+
+    # Append text to the file
+    echo "$text" | sudo tee -a "$file" > /dev/null
+    local status=$?
+
+    # Check if the write operation was successful
+    if [ $status -ne 0 ]; then
+        echo "Failed to write to $file."
+        return 1
+    else
+        echo "Text appended successfully to $file."
+        return 0
+    fi
+}
+
 # Enabling USB Driver
-echo "dtoverlay=dwc2" | sudo tee -a /boot/config.txt
-echo "dwc2" | sudo tee -a /etc/modules
+append_text_to_file "dtoverlay=dwc2" "/boot/config.txt" "dtoverlay=dwc2"
+append_text_to_file "dwc2" "/etc/modules" "dwc2"
 
 # Carefully edit commandline.txt to append 'modules-load=dwc2' at the end of the line
-sudo sed -i '$ s/$/ modules-load=dwc2 /' /boot/cmdline.txt
+if ! grep -q "modules-load=dwc2" /boot/cmdline.txt; then
+    sudo sed -i '$ s/$/ modules-load=dwc2/' /boot/cmdline.txt && echo "Modified /boot/cmdline.txt successfully."
+else
+    echo "Modification already exists in /boot/cmdline.txt."
+fi
 
 # Disabling power-saving for Wlan
 sudo iw wlan0 set power_save off
@@ -165,15 +198,17 @@ echo "/piusb.bin $MOUNT_FOLDER vfat users,umask=000 0 2" | sudo tee -a /etc/fsta
 sudo mount -a
 
 # Configure Samba
-cat <<EOT | sudo tee -a /etc/samba/smb.conf
+samba_block=$(cat <<'EOT'
 [usb]
     browseable = yes
-	path = /mnt/usb_share
-	guest ok = yes
-	read only = no
-	create mask = 777
-	directory mask = 777
+    path = /mnt/usb_share
+    guest ok = yes
+    read only = no
+    create mask = 777
+    directory mask = 777
 EOT
+)
+append_text_to_file "$samba_block" "/etc/samba/smb.conf" "[usb]"
 
 # Restart Samba services
 sudo systemctl restart smbd
@@ -188,7 +223,7 @@ else
 fi
 
 # Create systemd service for usbshare.py
-cat <<EOT | sudo tee /etc/systemd/system/usbshare.service
+usbshare_service_block=$(cat <<'EOT'
 [Unit]
 Description=Watchdog for USB Share
 After=multi-user.target
@@ -200,6 +235,8 @@ ExecStart=/usr/bin/python3 /usr/local/share/usbshare.py
 [Install]
 WantedBy=multi-user.target
 EOT
+)
+append_text_to_file "$usbshare_service_block" "/etc/systemd/system/usbshare.service" "[Unit]"
 
 # Enable and start the service
 sudo systemctl daemon-reload
