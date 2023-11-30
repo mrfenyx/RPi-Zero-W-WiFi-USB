@@ -36,9 +36,43 @@ else
     fi
 fi
 
+# Function to install packages and check for errors
+install_packages() {
+    # Update package lists
+    sudo apt-get update
+    if [ $? -ne 0 ]; then
+        echo "Failed to update package lists."
+        return 1
+    fi
+
+    # Upgrade existing packages
+    sudo apt-get upgrade -y
+    if [ $? -ne 0 ]; then
+        echo "Failed to upgrade packages."
+        return 1
+    fi
+
+    # Install new packages
+    sudo apt-get install -y samba winbind python3-pip python3-watchdog
+    return $? # Return the exit status of the last command executed
+}
+
 # Install necessary packages
-sudo apt-get update && sudo apt-get upgrade -y
-sudo apt-get install -y samba winbind python3-pip python3-watchdog
+while true; do
+    install_packages
+    if [ $? -eq 0 ]; then
+        echo "Packages installed successfully."
+        break
+    else
+        echo "An error occurred during package installation."
+        echo "Do you want to retry? (yes/no):"
+        read user_choice
+        if [[ "$user_choice" != "yes" && "$user_choice" != "y" ]]; then
+            echo "Installation aborted by the user."
+            exit 1
+        fi
+    fi
+done
 
 # Enabling USB Driver
 echo "dtoverlay=dwc2" | sudo tee -a /boot/config.txt
