@@ -7,7 +7,7 @@ MOUNT_FOLDER="/mnt/usb_share"
 USE_EXISTING_FOLDER="no"
 
 # Known compatible hardware models
-COMPATIBLE_MODELS=("Raspberry Pi Zero W Rev 1.1")
+COMPATIBLE_MODELS=("Raspberry Pi Zero W Rev 1.1" "Raspberry Pi Zero 2 W Rev 1.0")
 
 # Check the hardware model
 HARDWARE_MODEL=$(cat /proc/device-tree/model)
