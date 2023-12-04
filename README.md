@@ -2,7 +2,7 @@
 
 ## Goal
 
-The goal is to use a Raspberry Pi Zero W as a USB Drive (for example, for your 3D printer) while being able to access it from your laptop or through Wi-Fi, as a network drive. In the case of a 3D printer, in this way you can export g-code to the shared folder and a couple of seconds later, it will be available to your device.
+The goal is to use a Raspberry Pi Zero / Zero 2 W as a USB Drive (for example, for your 3D printer) while being able to access it from your laptop or through Wi-Fi, as a network drive. In the case of a 3D printer, in this way you can export g-code to the shared folder and a couple of seconds later, it will be available to your device.
 
 In case of Anycubic printers that can use their Mobile app, you can then directly initiate a print from it.
 
@@ -12,7 +12,7 @@ In general, you only have to select the file on your printer and that's it! No m
 
 ## Bill of Materials
 
-- Raspberry Pi Zero W
+- Raspberry Pi Zero W or Zero 2 W
 - 2x Micro USB to USB cables
 - Power supply for the Raspberry Pi
 - Micro-SD Card for Raspberry Pi (preferably 16 GB)
