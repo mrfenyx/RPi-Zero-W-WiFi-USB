@@ -10,6 +10,9 @@ In general, you only have to select the file on your printer and that's it! No m
 
 **DISCLAIMER** : _I tried, tested and am currently using this setup but there may be a lot of reasons why it may not work for you. I also accept absolutely no responsibility in case something goes wrong, and you break any of your hardware, including the Raspberry Pi or your 3D printer. Do this at your own risk!_
 
+## Demo
+[RPi WiFi USB - PrusaSlicer_.webm](https://github.com/mrfenyx/RPi-Zero-W-WiFi-USB/assets/2023454/e220b13b-e857-4b3c-88e2-5ac9519e6986)
+
 ## Bill of Materials
 
 - Raspberry Pi Zero W or Zero 2 W
