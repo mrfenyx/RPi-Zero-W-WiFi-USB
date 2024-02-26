@@ -48,6 +48,8 @@ Once that is done, just hang back and watch the work happen.
 
 **NOTE:** This will probably take a while. Depending on how many updates the system needs to install, anywhere from 30-60 minutes, maybe even more.
 
+When all is done, the USB cable is "fixed" and the setup is finished, you can navigate to `\\<RPi_IP>\usb` on your PC and you should see an empty folder where you can drop your first .gcode file ;) 
+
 # Manual Setup
 
 If you want to do the setup manually, perform the steps below. This will also allow you to perform some checks from time to time and explains what is happening in more detail.
@@ -175,7 +177,7 @@ sudo systemctl restart smbd.service
 ```
 ## Accessing the folder from you PC
 
-Find the IP of the Raspberry Pi (for example, running ifconfig on the RasPi). Then, on your PC go to \\\<RPi\_IP\> and you should see one shared folder called "usb".
+Find the IP of the Raspberry Pi (for example, running ifconfig on the RasPi). Then, on your PC go to \\\\<RPi\_IP\> and you should see one shared folder called "usb".
 
 ## Making the Magic Happen – Automated USB Device Reconnect
 
