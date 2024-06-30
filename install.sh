@@ -103,15 +103,21 @@ append_text_to_file() {
     fi
 }
 
+# Determine the correct directory for boot files
+BOOT_DIR="/boot"
+if [ -d "/boot/firmware" ]; then
+    BOOT_DIR="/boot/firmware"
+fi
+
 # Enabling USB Driver
-append_text_to_file "dtoverlay=dwc2" "/boot/config.txt" "dtoverlay=dwc2"
+append_text_to_file "dtoverlay=dwc2" "$BOOT_DIR/config.txt" "dtoverlay=dwc2"
 append_text_to_file "dwc2" "/etc/modules" "dwc2"
 
 # Carefully edit commandline.txt to append 'modules-load=dwc2' at the end of the line
-if ! grep -q "modules-load=dwc2" /boot/cmdline.txt; then
-    sudo sed -i '$ s/$/ modules-load=dwc2/' /boot/cmdline.txt && echo "Modified /boot/cmdline.txt successfully."
+if ! grep -q "modules-load=dwc2" $BOOT_DIR/cmdline.txt; then
+    sudo sed -i '$ s/$/ modules-load=dwc2/' $BOOT_DIR/cmdline.txt && echo "Modified $BOOT_DIR/cmdline.txt successfully."
 else
-    echo "Modification already exists in /boot/cmdline.txt."
+    echo "Modification already exists in $BOOT_DIR/cmdline.txt."
 fi
 
 # Disabling power-saving for Wlan
