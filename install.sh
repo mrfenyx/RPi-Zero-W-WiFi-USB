@@ -9,7 +9,7 @@ DRIVER_TO_USE="g_multi"
 if [[ "g_mass_storage" == "$1" ]]; then
     DRIVER_TO_USE="g_mass_storage"
 fi
-ACTIVE_STATUS=$(systemctl is-active usbshare.service)
+
 echo "Service is currently $ACTIVE_STATUS"
 # Known compatible hardware models
 COMPATIBLE_MODELS=("Raspberry Pi Zero W Rev 1.1" "Raspberry Pi Zero 2 W Rev 1.0")
@@ -222,7 +222,10 @@ append_text_to_file "$samba_block" "/etc/samba/smb.conf" "[usb]"
 
 # Restart Samba services
 sudo systemctl restart smbd
-
+ACTIVE_STATUS=$(systemctl is-active usbshare.service)
+if [[ "$ACTIVE_STATUS" == "active" ]]; then
+    sudo systemctl disable usbshare.service
+fi
 # Copy usbshare.py script
 if [ -f "usbshare.py" ]; then
     sudo cp usbshare.py /usr/local/share/usbshare.py
