@@ -6,7 +6,7 @@ REQUIRED_SPACE_MB=$((USB_FILE_SIZE_MB + 1024)) # Required space including buffer
 MOUNT_FOLDER="/mnt/usb_share"
 USE_EXISTING_FOLDER="no"
 DRIVER_TO_USE="g_multi"
-if [[ "g_mass_storage" == "$1" ]]; then
+if [[ "g_mass_storage" = "$1" ]]; then
     DRIVER_TO_USE="g_mass_storage"
 fi
 
@@ -204,7 +204,7 @@ if [ "$USE_EXISTING_FOLDER" = "no" ]; then
     sudo mkdir "$MOUNT_FOLDER"
     sudo chmod 777 "$MOUNT_FOLDER"
 fi
-append_text_to_file "/piusb.bin $MOUNT_FOLDER vfat users,umask=000 0 2" "/etc/fstabs" "piusb.bin"
+append_text_to_file "/piusb.bin $MOUNT_FOLDER vfat users,umask=000 0 2" "/etc/fstab" "piusb.bin"
 sudo mount -a
 
 # Configure Samba
@@ -223,14 +223,14 @@ append_text_to_file "$samba_block" "/etc/samba/smb.conf" "[usb]"
 # Restart Samba services
 sudo systemctl restart smbd
 ACTIVE_STATUS=$(systemctl is-active usbshare.service)
-if [[ "$ACTIVE_STATUS" == "active" ]]; then
+if [[ "$ACTIVE_STATUS" = "active" ]]; then
     sudo systemctl disable usbshare.service
 fi
 # Copy usbshare.py script
 if [ -f "usbshare.py" ]; then
     sudo cp usbshare.py /usr/local/share/usbshare.py
     sudo chmod +x /usr/local/share/usbshare.py
-    if [[ "$DRIVER_TO_USE" == "g_mass_storage" ]; then
+    if [[ "$DRIVER_TO_USE" = "g_mass_storage" ]; then
         sudo sed -i 's/g_multi/g_mass_storage/g' /usr/local/share/usbshare.py
     fi
 else
