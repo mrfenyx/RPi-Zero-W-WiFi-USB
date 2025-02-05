@@ -351,11 +351,33 @@ Open an SSH shell to your pi, and run `sudo dmesg -w` and watch if this log gets
 [167504.648298] dwc2 20980000.usb: new device is full-speed
 [167504.686546] dwc2 20980000.usb: new address 1
 ```
-If this is the case, open the file `/usr/local/share/usbshare.py` and change the CMD lines to this, and restart the pi:
+If this is the case, reinstall the service using the g_mass_storage driver, or manually update the script above, replacing 'g_multi' with 'g_mass_storage'.
 ```
-CMD_MOUNT = "sudo /sbin/modprobe g_mass_storage file=/piusb.bin stall=0 ro=1 removable=y"
-CMD_UNMOUNT = "sudo /sbin/modprobe g_mass_storage -r"
+sudo ./install.sh g_mass_storage
+```
+If you are watching `sudo dmesg -w` in another ssh session, you will see this change drivers, and hopefully will work for you. It shoudl stop repeating the device connected messages, and only have 1 record.
 ```
 
-//TODO, provide a command in the install script to automatically change that, 
-
+[171127.975803] dwc2 20980000.usb: new address 1
+[171134.612520] dwc2 20980000.usb: new device is full-speed
+[171134.776381] dwc2 20980000.usb: new device is full-speed
+[171134.814604] dwc2 20980000.usb: new address 1
+[171141.451306] dwc2 20980000.usb: new device is full-speed
+[171141.615170] dwc2 20980000.usb: new device is full-speed
+[171141.653405] dwc2 20980000.usb: new address 1
+[171144.695230] systemd-fstab-generator[7154]: Checking was requested for "/piusb.bin", but it is not a device.
+[171152.437209] systemd-fstab-generator[7184]: Checking was requested for "/piusb.bin", but it is not a device.
+[171160.014422] systemd-fstab-generator[7219]: Checking was requested for "/piusb.bin", but it is not a device.
+[171167.303899] systemd-fstab-generator[7240]: Checking was requested for "/piusb.bin", but it is not a device.
+[171171.961745] Mass Storage Function, version: 2009/09/11
+[171171.961781] LUN: removable file: (no medium)
+[171171.961961] LUN: removable file: /piusb.bin
+[171171.961983] Number of LUNs=1
+[171171.971615] g_mass_storage gadget.0: Mass Storage Gadget, version: 2009/09/11
+[171171.971653] g_mass_storage gadget.0: userspace failed to provide iSerialNumber
+[171171.971668] g_mass_storage gadget.0: g_mass_storage ready
+**[171171.971685] dwc2 20980000.usb: bound driver g_mass_storage
+[171172.236378] dwc2 20980000.usb: new device is full-speed
+[171172.400195] dwc2 20980000.usb: new device is full-speed
+[171172.438425] dwc2 20980000.usb: new address 1**
+```
