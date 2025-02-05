@@ -229,6 +229,7 @@ if [[ "$ACTIVE_STATUS" = "active" ]]; then
     sudo systemctl disable usbshare.service
     sudo modprobe g_multi -r
     sudo modprobe g_mass_storage -r
+    sudo systemctl daemon-reload
 fi
 # Copy usbshare.py script
 if [ -f "usbshare.py" ]; then
