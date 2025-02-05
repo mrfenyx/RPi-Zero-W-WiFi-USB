@@ -225,6 +225,8 @@ sudo systemctl restart smbd
 ACTIVE_STATUS=$(systemctl is-active usbshare.service)
 if [[ "$ACTIVE_STATUS" = "active" ]]; then
     sudo systemctl disable usbshare.service
+    sudo modprobe g_multi -r
+    sudo modprobe g_mass_storage -r
 fi
 # Copy usbshare.py script
 if [ -f "usbshare.py" ]; then
