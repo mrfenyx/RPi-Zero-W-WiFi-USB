@@ -230,7 +230,7 @@ fi
 if [ -f "usbshare.py" ]; then
     sudo cp usbshare.py /usr/local/share/usbshare.py
     sudo chmod +x /usr/local/share/usbshare.py
-    if [[ "$DRIVER_TO_USE" = "g_mass_storage" ]; then
+    if [[ "$DRIVER_TO_USE" = "g_mass_storage" ]]; then
         sudo sed -i 's/g_multi/g_mass_storage/g' /usr/local/share/usbshare.py
     fi
 else
