@@ -204,7 +204,7 @@ if [ "$USE_EXISTING_FOLDER" = "no" ]; then
     sudo mkdir "$MOUNT_FOLDER"
     sudo chmod 777 "$MOUNT_FOLDER"
 fi
-append_text_to_file "/piusb.bin $MOUNT_FOLDER vfat users,umask=000 0 2" "/etc/fstab" "piusb.bin"
+append_text_to_file "/piusb.bin $MOUNT_FOLDER vfat users,umask=000 0 2" "/etc/fstab" "/piusb.bin $MOUNT_FOLDER vfat users,umask=000 0 2"
 sudo mount -a
 
 # Configure Samba
