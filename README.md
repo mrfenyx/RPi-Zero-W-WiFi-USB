@@ -340,3 +340,22 @@ To test things out, open your favourite slicer, generate some g-code and save it
 If it works, good job! 👏🥂🥳🎉🎊
 
 If not, I'm sorry! 😢😭😿
+
+## Troubleshooting
+### g_multi driver vs g_mass_storage driver
+Some printers may not work with the g_multi driver, which produces a "single USB configuration with RNDIS[1] (that is Ethernet), USB CDC[2] ACM (that is serial) and USB Mass Storage functions."
+If this is the case, and your files do not show up on your printer using the install script, you can use this troubleshooting.
+Open an SSH shell to your pi, and run `sudo dmesg -w` and watch if this log gets printed repeatedly, it is just looping on this, then it means the printer will not use this USB device.
+```
+[167504.484474] dwc2 20980000.usb: new device is full-speed
+[167504.648298] dwc2 20980000.usb: new device is full-speed
+[167504.686546] dwc2 20980000.usb: new address 1
+```
+If this is the case, open the file `/usr/local/share/usbshare.py` and change the CMD lines to this, and restart the pi:
+```
+CMD_MOUNT = "sudo /sbin/modprobe g_mass_storage file=/piusb.bin stall=0 ro=1 removable=y"
+CMD_UNMOUNT = "sudo /sbin/modprobe g_mass_storage -r"
+```
+
+//TODO, provide a command in the install script to automatically change that, 
+
