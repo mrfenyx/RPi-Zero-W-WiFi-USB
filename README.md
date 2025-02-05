@@ -376,8 +376,8 @@ If you are watching `sudo dmesg -w` in another ssh session, you will see this ch
 [171171.971615] g_mass_storage gadget.0: Mass Storage Gadget, version: 2009/09/11
 [171171.971653] g_mass_storage gadget.0: userspace failed to provide iSerialNumber
 [171171.971668] g_mass_storage gadget.0: g_mass_storage ready
-**[171171.971685] dwc2 20980000.usb: bound driver g_mass_storage
+[171171.971685] dwc2 20980000.usb: bound driver g_mass_storage
 [171172.236378] dwc2 20980000.usb: new device is full-speed
 [171172.400195] dwc2 20980000.usb: new device is full-speed
-[171172.438425] dwc2 20980000.usb: new address 1**
+[171172.438425] dwc2 20980000.usb: new address 1
 ```
