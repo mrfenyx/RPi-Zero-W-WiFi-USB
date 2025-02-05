@@ -225,6 +225,7 @@ sudo systemctl restart smbd
 ACTIVE_STATUS=$(systemctl is-active usbshare.service)
 if [[ "$ACTIVE_STATUS" = "active" ]]; then
     echo "Service is currently active, shutting down"
+    sudo systemctl stop usbshare.service
     sudo systemctl disable usbshare.service
     sudo modprobe g_multi -r
     sudo modprobe g_mass_storage -r
