@@ -5,6 +5,11 @@ USB_FILE_SIZE_MB=2048 # Size of the USB file in Megabytes
 REQUIRED_SPACE_MB=$((USB_FILE_SIZE_MB + 1024)) # Required space including buffer
 MOUNT_FOLDER="/mnt/usb_share"
 USE_EXISTING_FOLDER="no"
+DRIVER_TO_USE="g_multi"
+if [[ "g_mass_storage" = "$1" ]]; then
+    DRIVER_TO_USE="g_mass_storage"
+fi
+
 
 # Known compatible hardware models
 COMPATIBLE_MODELS=("Raspberry Pi Zero W Rev 1.1" "Raspberry Pi Zero 2 W Rev 1.0")
@@ -199,8 +204,7 @@ if [ "$USE_EXISTING_FOLDER" = "no" ]; then
     sudo mkdir "$MOUNT_FOLDER"
     sudo chmod 777 "$MOUNT_FOLDER"
 fi
-
-echo "/piusb.bin $MOUNT_FOLDER vfat users,umask=000 0 2" | sudo tee -a /etc/fstab
+append_text_to_file "/piusb.bin $MOUNT_FOLDER vfat users,umask=000 0 2" "/etc/fstab" "/piusb.bin $MOUNT_FOLDER vfat users,umask=000 0 2"
 sudo mount -a
 
 # Configure Samba
@@ -218,11 +222,22 @@ append_text_to_file "$samba_block" "/etc/samba/smb.conf" "[usb]"
 
 # Restart Samba services
 sudo systemctl restart smbd
-
+ACTIVE_STATUS=$(systemctl is-active usbshare.service)
+if [[ "$ACTIVE_STATUS" = "active" ]]; then
+    echo "Service is currently active, shutting down"
+    sudo systemctl stop usbshare.service
+    sudo systemctl disable usbshare.service
+    sudo modprobe g_multi -r
+    sudo modprobe g_mass_storage -r
+    sudo systemctl daemon-reload
+fi
 # Copy usbshare.py script
 if [ -f "usbshare.py" ]; then
     sudo cp usbshare.py /usr/local/share/usbshare.py
     sudo chmod +x /usr/local/share/usbshare.py
+    if [[ "$DRIVER_TO_USE" = "g_mass_storage" ]]; then
+        sudo sed -i 's/g_multi/g_mass_storage/g' /usr/local/share/usbshare.py
+    fi
 else
     echo "usbshare.py not found"
     exit 1

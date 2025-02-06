@@ -340,3 +340,44 @@ To test things out, open your favourite slicer, generate some g-code and save it
 If it works, good job! 👏🥂🥳🎉🎊
 
 If not, I'm sorry! 😢😭😿
+
+## Troubleshooting
+### g_multi driver vs g_mass_storage driver
+Some printers may not work with the g_multi driver, which produces a "single USB configuration with RNDIS[1] (that is Ethernet), USB CDC[2] ACM (that is serial) and USB Mass Storage functions."
+If this is the case, and your files do not show up on your printer using the install script, you can use this troubleshooting.
+Open an SSH shell to your pi, and run `sudo dmesg -w` and watch if this log gets printed repeatedly, it is just looping on this, then it means the printer will not use this USB device.
+```
+[167504.484474] dwc2 20980000.usb: new device is full-speed
+[167504.648298] dwc2 20980000.usb: new device is full-speed
+[167504.686546] dwc2 20980000.usb: new address 1
+```
+If this is the case, reinstall the service using the g_mass_storage driver, or manually update the script above, replacing 'g_multi' with 'g_mass_storage'.
+```
+sudo ./install.sh g_mass_storage
+```
+If you are watching `sudo dmesg -w` in another ssh session, you will see this change drivers, and hopefully will work for you. It shoudl stop repeating the device connected messages, and only have 1 record.
+```
+
+[171127.975803] dwc2 20980000.usb: new address 1
+[171134.612520] dwc2 20980000.usb: new device is full-speed
+[171134.776381] dwc2 20980000.usb: new device is full-speed
+[171134.814604] dwc2 20980000.usb: new address 1
+[171141.451306] dwc2 20980000.usb: new device is full-speed
+[171141.615170] dwc2 20980000.usb: new device is full-speed
+[171141.653405] dwc2 20980000.usb: new address 1
+[171144.695230] systemd-fstab-generator[7154]: Checking was requested for "/piusb.bin", but it is not a device.
+[171152.437209] systemd-fstab-generator[7184]: Checking was requested for "/piusb.bin", but it is not a device.
+[171160.014422] systemd-fstab-generator[7219]: Checking was requested for "/piusb.bin", but it is not a device.
+[171167.303899] systemd-fstab-generator[7240]: Checking was requested for "/piusb.bin", but it is not a device.
+[171171.961745] Mass Storage Function, version: 2009/09/11
+[171171.961781] LUN: removable file: (no medium)
+[171171.961961] LUN: removable file: /piusb.bin
+[171171.961983] Number of LUNs=1
+[171171.971615] g_mass_storage gadget.0: Mass Storage Gadget, version: 2009/09/11
+[171171.971653] g_mass_storage gadget.0: userspace failed to provide iSerialNumber
+[171171.971668] g_mass_storage gadget.0: g_mass_storage ready
+[171171.971685] dwc2 20980000.usb: bound driver g_mass_storage
+[171172.236378] dwc2 20980000.usb: new device is full-speed
+[171172.400195] dwc2 20980000.usb: new device is full-speed
+[171172.438425] dwc2 20980000.usb: new address 1
+```
