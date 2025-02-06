@@ -96,6 +96,7 @@ Normally a USB cable also provides current to the device that is connected to th
 Once this is done, you can connect this cable to the Data port on the Raspberry Pi (NOT the power port!) and the other end, for now, to your laptop / PC.
 
 **NOTE: Powering the Pi from your printer**
+
 If your printer is capable of providing a stable 5V power ( and your PC while testing ), and you only need access to the network drive while the printer is turned on, you can use a single "normal" cable connected from the printer to the DATA usb plug on the Raspberry Pi Zero. With this setup, if you power-off your printer, then the whole Raspberry Pi will turn off as well, so you can only access the network drive while your printer is online.
 
 ## Creating a USB File
