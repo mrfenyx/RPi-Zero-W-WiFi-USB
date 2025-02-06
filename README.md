@@ -95,6 +95,9 @@ sudo iw wlan0 set power_save off
 Normally a USB cable also provides current to the device that is connected to the port. In order to ensure there is no interference between the Raspberry Pi and your printer, you need to ensure that there is no current flowing through the cable used to connect them. To do this, follow this tutorial: [https://community.octoprint.org/t/put-tape-on-the-5v-pin-why-and-how/13574](https://community.octoprint.org/t/put-tape-on-the-5v-pin-why-and-how/13574)
 Once this is done, you can connect this cable to the Data port on the Raspberry Pi (NOT the power port!) and the other end, for now, to your laptop / PC.
 
+## Powering the Pi from your printer
+If your printer is capable of providing a stable 5V power ( and your PC while testing ), and you only need access to the network drive while the printer is turned on, you can use a single "normal" cable connected from the printer to the DATA usb plug on the Raspberry Pi Zero. With this setup, if you power-off your printer, then the whole Raspberry Pi will turn off as well, so you can only access the network drive while your printer is online.
+
 ## Creating a USB File
 
 Next, you need to create a file that will contain the data you want to share with the printer.
