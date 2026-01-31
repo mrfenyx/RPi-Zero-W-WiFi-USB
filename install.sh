@@ -120,12 +120,25 @@ else
     echo "Modification already exists in $BOOT_DIR/cmdline.txt."
 fi
 
-# Disabling power-saving for Wlan
-sudo iw wlan0 set power_save off
+# Disabling power-saving for Wlan (best-effort)
+if command -v iw >/dev/null 2>&1; then
+    if ip link show wlan0 >/dev/null 2>&1; then
+        sudo iw wlan0 set power_save off || echo "Warning: failed to set wlan power_save"
+    else
+        echo "wlan0 not present, skipping power_save change"
+    fi
+else
+    echo "iw not installed, skipping wlan power_save change"
+fi
 
-# Function to create USB file
+# Function to create USB file (use fallocate when available for speed)
 create_usb_file() {
-    sudo dd bs=1M if=/dev/zero of=/piusb.bin count=$1
+    local size_mb="$1"
+    if command -v fallocate >/dev/null 2>&1; then
+        sudo fallocate -l "${size_mb}M" /piusb.bin
+    else
+        sudo dd bs=1M if=/dev/zero of=/piusb.bin count="$size_mb"
+    fi
     sudo mkdosfs /piusb.bin -F 32 -I
 }
 
@@ -200,8 +213,9 @@ if [ "$USE_EXISTING_FOLDER" = "no" ]; then
     sudo chmod 777 "$MOUNT_FOLDER"
 fi
 
-echo "/piusb.bin $MOUNT_FOLDER vfat users,umask=000 0 2" | sudo tee -a /etc/fstab
-sudo mount -a
+fstab_entry="/piusb.bin $MOUNT_FOLDER vfat users,umask=000 0 2"
+append_text_to_file "$fstab_entry" "/etc/fstab" "/piusb.bin"
+sudo mount -a || echo "Warning: 'mount -a' failed; you may need to mount manually"
 
 # Configure Samba
 samba_block=$(cat <<'EOT'
@@ -217,7 +231,7 @@ EOT
 append_text_to_file "$samba_block" "/etc/samba/smb.conf" "[usb]"
 
 # Restart Samba services
-sudo systemctl restart smbd
+sudo systemctl restart smbd || echo "Warning: failed to restart smbd service"
 
 # Copy usbshare.py script
 if [ -f "usbshare.py" ]; then
@@ -237,6 +251,8 @@ After=multi-user.target
 [Service]
 Type=idle
 ExecStart=/usr/bin/python3 /usr/local/share/usbshare.py
+Restart=on-failure
+RestartSec=5
 
 [Install]
 WantedBy=multi-user.target
@@ -247,7 +263,7 @@ append_text_to_file "$usbshare_service_block" "/etc/systemd/system/usbshare.serv
 # Enable and start the service
 sudo systemctl daemon-reload
 sudo systemctl enable usbshare.service
-sudo systemctl start usbshare.service
+sudo systemctl start usbshare.service || echo "Warning: failed to start usbshare.service"
 
 # Feedback request for new hardware models
 if [ "$COMPATIBILITY_CHECK_PASSED" = false ]; then
